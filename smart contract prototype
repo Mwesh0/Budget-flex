@@ -1,0 +1,30 @@
+import {
+  Client,
+  TokenMintTransaction,
+  PrivateKey,
+  AccountId
+} from "@hashgraph/sdk";
+
+// Initialize Hedera client
+const client = Client.forTestnet(); // Use .forMainnet() in production
+client.setOperator(
+  AccountId.fromString("0.0.1234"), // Your operator account
+  PrivateKey.fromString("302e...")   // Your operator private key
+);
+
+// Award BGPLS tokens to users
+async function awardBGPLS(userAccountId, amount) {
+  const tokenId = ""; // Your Bfx token ID
+
+  // Mint and send tokens
+  const mintTx = await new TokenMintTransaction()
+    .setTokenId(tokenId)
+    .setAmount(amount * 1e8) // Convert to decimals (e.g., 50 BGPLS = 50_00000000)
+    .execute(client);
+
+  const mintRx = await mintTx.getRecord(client);
+  console.log(`Awarded ${amount} BGPLS to ${userAccountId}: ${mintRx.transactionId}`);
+}
+
+// Example: Award 50 BGPLS to user 0.0.9876
+await awardBGPLS("0.0.9876", 50);
